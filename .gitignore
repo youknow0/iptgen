@@ -1,3 +1,15 @@
+# config file
+config.py
+
+# rules file
+rules
+
+*.bak.py
+
+*.swp
+*.swo
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

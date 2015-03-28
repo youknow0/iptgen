@@ -1,7 +1,7 @@
 host myworkstation
     # SSH runs on port 22
     forward_port 22
-    allow_in 62627
+    allow_in 22
 
     allow_out http
     allow_out ftp

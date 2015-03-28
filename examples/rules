@@ -1,0 +1,26 @@
+host myworkstation
+    # SSH runs on port 22
+    forward_port 22
+    allow_in 62627
+
+    allow_out http
+    allow_out ftp
+    allow_out https
+
+    # hostname lookups
+    allow_out domain udp
+    allow_out domain tcp
+end_host
+
+host mywebserver
+    # allow http and https access
+    forward_port https
+    forward_port http
+
+    allow_in https
+    allow_in http
+
+    # hostname lookups
+    allow_out domain udp
+    allow_out domain tcp
+end_host

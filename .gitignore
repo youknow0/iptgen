@@ -2,7 +2,7 @@
 config.py
 
 # rules file
-rules
+/rules
 rules.old
 
 *.bak.py

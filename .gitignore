@@ -3,8 +3,10 @@ config.py
 
 # rules file
 rules
+rules.old
 
 *.bak.py
+*_bak.py
 
 *.swp
 *.swo

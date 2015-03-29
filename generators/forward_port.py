@@ -5,7 +5,7 @@ from hooks.registry import call_hook
 class ForwardPortGenerator(object):
 
     def generate(self, rule):
-        rule_str = "-A PREROUTING "
+        rule_str = "-A PREROUTING -j DNAT "
 
         if rule.protocol == "tcp":
             rule_str += "-p tcp "

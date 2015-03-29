@@ -25,6 +25,8 @@ Features
   text file, that can be edited manually (or by script) after it has 
   been generated.
 
+* Python 3 and Python 2 compatible.
+
 The framework
 ----
 

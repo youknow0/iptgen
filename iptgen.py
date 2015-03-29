@@ -1,5 +1,6 @@
 #!/usr/bin/python
 from __future__ import print_function
+from __future__ import unicode_literals 
 
 from pprint import PrettyPrinter
 from parsers.registry import register_parser, get_parser
@@ -35,7 +36,9 @@ parser.add_argument('--config',
 args = parser.parse_args()
 
 # load the config file
-execfile(args.config)
+with open(args.config) as c:
+    code = compile(c.read(), args.config, 'exec')
+    exec(code)
 
 def error_out(msg):
     print ("ERROR: " + msg, file=sys.stderr)

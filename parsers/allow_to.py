@@ -24,7 +24,6 @@ class AllowToParser(object):
         dest = tokens[1]
         port = tokens[2]
 
-
         # optional protocol argument
         if 3 in tokens:
             proto = tokens[3]

@@ -28,13 +28,6 @@ class AllowToGenerator(object):
 
 
         return rule_out
-        rule_str += ("--dport %s -s %s -d %s" % 
-                     (rule.port, rule.host, rule.dest))
-
-        rule_str = call_hook("rule_allow_to", 
-                             rule_str, rule)
-
-        return rule_str
 
 _gen = AllowToGenerator()
 register_generator("allow_to", _gen.generate)

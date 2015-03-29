@@ -14,8 +14,12 @@ class ForwardPortGenerator(object):
         else: 
             raise "Unknown proto"
 
+        # for port ranges, iptables expects a minus in the --to 
+        # argument, but a colon in the --dport argument...
+        toport = rule.port.replace(":", "-")
+
         rule_str += ("--dport %s " % (rule.port,))
-        rule_str += ("--to %s:%s " % (rule.host, rule.port))
+        rule_str += ("--to %s:%s " % (rule.host, toport))
 
         rule_str = call_hook("rule_forward_port",
                              rule_str, rule)

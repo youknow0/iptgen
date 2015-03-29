@@ -3,6 +3,8 @@ from parsers.registry import register_parser
 from collections import namedtuple
 from parsers.host import host_parser
 
+IPv6Rule = namedtuple("IPv6Rule", "host addr")
+
 class IPv6Parser(object):
 
     def parse(self, tokens):
@@ -14,14 +16,7 @@ class IPv6Parser(object):
         if len(tokens) < 2:
             raise ParserException("IPv6 keyword requires an argument!")
 
-        if not host in self.addresses:
-            self.addresses[host] = []
-
-        ip = tokens[2]
-
-        self.addr[host].append(ip)
-
-        return ip
+        return IPv6Rule(host=host, addr=tokens[1])
 
 _parser = IPv6Parser()
 register_parser("ipv6", _parser.parse)

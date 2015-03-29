@@ -1,7 +1,10 @@
 #!/usr/bin/python
+from __future__ import print_function
 
 from pprint import PrettyPrinter
 from parsers.registry import register_parser, get_parser
+from parsers.exception import ParserException
+from generators.exception import GeneratorException
 from generators.registry import get_generator
 
 import sys
@@ -31,15 +34,23 @@ parser.add_argument('--config',
 
 args = parser.parse_args()
 
+# load the config file
 execfile(args.config)
+
+def error_out(msg):
+    print ("ERROR: " + msg, file=sys.stderr)
+    sys.exit(1)
+
+def error_line(msg, line):
+    error_out("in rule file, line %d: %s" % (line, msg))
 
 rules = []
 i = 1
 with args.generate as rules_file:
     for l in rules_file:
         tokens = l.split()
-        for j, t in enumerate(tokens):
-            tokens[j] = t.strip()
+
+        tokens = [t.strip() for t in tokens]
 
         # empty lines
         if len(tokens) < 1:
@@ -54,20 +65,31 @@ with args.generate as rules_file:
             continue
 
         if len(tokens) > 0:
-            parser = get_parser(keyword)
-            rule = parser(tokens)
 
-            generator = get_generator(keyword)
+            try:
+                parser = get_parser(keyword)
 
-            if args.include_origin:
-                rules.append("# origin: line %d" % (i,))
+                rule = parser(tokens)
 
-            generated = generator(rule)
+                generator = get_generator(keyword)
 
-            if generated != None:
-                rules.append(generated)
+                generated = generator(rule)
+    
+                # only add rule to output if the generator actually
+                # produced output
+                if generated != None:
+                    # include origin
+                    if args.include_origin:
+                        rules.append("# origin: line %d" % (i,))
+                    rules.append(generated)
+
+            except ParserException as e:
+                error_line(e, i)
+            except GeneratorException as e:
+                error_line(e, i)
 
         i += 1
 
 for r in rules:
-    print r
+    print(r)
+

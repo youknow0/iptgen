@@ -1,3 +1,5 @@
+from parsers.exception import ParserException
+
 _parsers = {}
 
 def register_parser(keyword, handler):
@@ -7,6 +9,9 @@ def register_parser(keyword, handler):
     _parsers[keyword] = handler
 
 def get_parser(keyword):
-    return _parsers[keyword]
+    try:
+        return _parsers[keyword]
+    except KeyError as e:
+        raise ParserException('Unknown keyword "%s"' % (keyword,))
 
 

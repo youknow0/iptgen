@@ -3,8 +3,20 @@ from generators.registry import register_generator
 from generators.exception import GeneratorException
 from hooks.registry import call_hook
 from generators.addr import addr_generator
+from socket import getservbyname
 
 class ForwardPortGenerator(object):
+
+    def _lookup_port(self, port):
+        # is a digit, we assume this is a raw port number
+        if port.isdigit():
+            return port
+
+        # otherwise, we perform a service lookup
+        try:
+            return getservbyname(port)
+        except socket.error:
+            raise GeneratorException('Unknown service "%s"' % (port,))
 
     def generate(self, rule):
         rule_str = "-A PREROUTING -j DNAT "
@@ -20,11 +32,21 @@ class ForwardPortGenerator(object):
             raise GeneratorException('IP "%s" is not owned by host "%s"'
                                      % (rule.ip, rule.host))
 
-        # for port ranges, iptables expects a minus in the --to 
-        # argument, but a colon in the --dport argument...
-        toport = rule.port.replace(":", "-")
+        if rule.port.find(':') != -1:
+            (port_start, port_end) = rule.port.split(':')
+            port_start = self._lookup_port(port_start)
+            port_end = self._lookup_port(port_end)
+        
+            port = '%s:%s' % (port_start, port_end)
 
-        rule_str += ("--dport %s " % (rule.port,))
+            # for port ranges, iptables expects a minus in the --to 
+            # argument, but a colon in the --dport argument...
+            toport = port.replace(":", "-")
+        else:
+            port = self._lookup_port(rule.port)
+            toport = port
+
+        rule_str += ("--dport %s " % (port,))
         rule_str += ("--to %s:%s " % (rule.ip, toport))
 
         rule_str = call_hook("rule_forward_port",

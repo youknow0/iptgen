@@ -1,6 +1,8 @@
 from parsers.allow_in import allow_in_parser
 from hooks.registry import call_hook
 from generators.registry import register_generator
+from generators.addr import addr_generator
+from os import linesep
 
 class AllowInGenerator(object):
 
@@ -14,12 +16,17 @@ class AllowInGenerator(object):
         else: 
             raise "Unknown proto"
 
-        rule_str += ("--dport %s -d %s" % (rule.port, rule.host))
+        # generate one rule per addr of the host
+        rule_out = ""
+        for addr in addr_generator.addrs[rule.host]:
+            myrule = rule_str + ("--dport %s -d %s" 
+                                    % (rule.port, addr))
+            myrule = call_hook("rule_allow_in", 
+                                 myrule, rule)
+            rule_out += myrule + linesep
 
-        rule_str = call_hook("rule_allow_in", 
-                             rule_str, rule)
 
-        return rule_str
+        return rule_out
 
 
 _gen = AllowInGenerator()

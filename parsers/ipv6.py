@@ -1,6 +1,7 @@
 from parsers.exception import ParserException
 from parsers.registry import register_parser
 from collections import namedtuple
+from parsers.host import host_parser
 
 class IPv6Parser(object):
 

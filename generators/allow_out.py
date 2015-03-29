@@ -7,7 +7,7 @@ from os import linesep
 class AllowOutGenerator(object):
 
     def generate(self, rule):
-        rule_str = "-A FORWARD "
+        rule_str = "-A FORWARD -j ACCEPT "
 
         if rule.protocol == "tcp":
             rule_str += "-p tcp -m state --state NEW "

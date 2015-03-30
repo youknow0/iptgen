@@ -28,9 +28,9 @@ class ForwardPortGenerator(object):
         else: 
             raise "Unknown proto"
 
-        if not rule.ip in addr_generator.addrs[rule.host]:
+        if not rule.ip_to in addr_generator.addrs[rule.host]:
             raise GeneratorException('IP "%s" is not owned by host "%s"'
-                                     % (rule.ip, rule.host))
+                                     % (rule.ip_to, rule.host))
 
         if rule.port.find(':') != -1:
             (port_start, port_end) = rule.port.split(':')
@@ -47,7 +47,8 @@ class ForwardPortGenerator(object):
             toport = port
 
         rule_str += ("--dport %s " % (port,))
-        rule_str += ("--to %s:%s " % (rule.ip, toport))
+        rule_str += ("-d %s " % (rule.ip_from,))
+        rule_str += ("--to %s:%s " % (rule.ip_to, toport))
 
         rule_str = call_hook("rule_forward_port",
                              rule_str, rule)

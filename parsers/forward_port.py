@@ -3,11 +3,11 @@ from parsers.registry import register_parser
 from collections import namedtuple
 from parsers.host import host_parser
 
-ForwardPortRule = namedtuple("ForwardPortRule", "host port protocol ip")
+ForwardPortRule = namedtuple("ForwardPortRule", "host port protocol ip_from ip_to")
 
 """
 syntax:
-    forward_port <ip to forward to> <port  to forward> [proto]
+    forward_port <ip to forward from> <ip to forward to> <port  to forward> [proto]
 """
 
 class ForwardPortParser(object):
@@ -18,23 +18,25 @@ class ForwardPortParser(object):
             raise ParserException(
                 "ForwardPort must be inside Host section!")
 
-        if len(tokens) < 3:
+        if len(tokens) < 4:
             raise ParserException(
-                "ForwardPort keyword requires two arguments!")
+                "ForwardPort keyword requires three arguments!")
 
-        ip = tokens[1]
-        port = tokens[2]
+        ip_from = tokens[1]
+        ip_to = tokens[2]
+        port = tokens[3]
 
         # optional protocol argument
-        if 3 in tokens:
-            proto = tokens[3]
+        if 4 in tokens:
+            proto = tokens[4]
             if proto != "udp" and proto != "tcp":
                 raise ParserException("Unknown protocol %s" % (proto,))
         else:
             proto = "tcp"
 
         rule = ForwardPortRule(
-            port=port, protocol=proto, host=host, ip=ip)
+            port=port, protocol=proto, host=host, ip_from=ip_from, 
+                ip_to=ip_to)
 
         return rule
 

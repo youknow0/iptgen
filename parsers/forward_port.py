@@ -27,7 +27,7 @@ class ForwardPortParser(object):
         port = tokens[3]
 
         # optional protocol argument
-        if 4 in tokens:
+        if len(tokens) >= 5:
             proto = tokens[4]
             if proto != "udp" and proto != "tcp":
                 raise ParserException("Unknown protocol %s" % (proto,))

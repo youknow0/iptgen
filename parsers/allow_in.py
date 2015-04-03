@@ -19,8 +19,8 @@ class AllowInParser(object):
         port = tokens[1]
 
         # optional protocol argument
-        if 3 in tokens:
-            proto = tokens[3]
+        if len(tokens) >= 3:
+            proto = tokens[2]
             if proto != "udp" and proto != "tcp":
                 raise ParserException("Unknown protocol %s" % (proto,))
         else:

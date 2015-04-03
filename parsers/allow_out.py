@@ -21,8 +21,8 @@ class AllowOutParser(object):
         port = tokens[1]
 
         # optional protocol argument
-        if 3 in tokens:
-            proto = tokens[3]
+        if len(tokens) >= 3:
+            proto = tokens[2]
             if proto != "udp" and proto != "tcp":
                 raise ParserException("Unknown protocol %s" % (proto,))
         else:
@@ -30,8 +30,8 @@ class AllowOutParser(object):
 
         # optional destination argument
         dest = None
-        if 4 in tokens:
-            dest = tokens[4]
+        if len(tokens) >= 4:
+            dest = tokens[3]
 
         rule = AllowOutRule(
             port=port, protocol=proto, dest=dest, host=host)

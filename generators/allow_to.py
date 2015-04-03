@@ -12,7 +12,7 @@ class AllowToGenerator(object):
         if rule.protocol == "tcp":
             rule_str += "-p tcp -m state --state NEW "
         elif rule.protocol == "udp":
-            rule_str += "-p udp"
+            rule_str += "-p udp "
         else: 
             raise "Unknown proto"
 

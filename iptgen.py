@@ -86,7 +86,6 @@ with args.generate as rules_file:
 
     for (generator, rule) in generators_to_call:
         try:
-            print (generator)
             generated = generator(rule)
 
             # only add rule to output if the generator actually

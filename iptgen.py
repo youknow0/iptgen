@@ -50,6 +50,10 @@ def error_line(msg, line):
 rules = []
 i = 1
 with args.generate as rules_file:
+    # save the generators to call for later to allow generators to 
+    # access forward declarations made by parsers
+    generators_to_call = []
+
     for l in rules_file:
         tokens = l.split()
 
@@ -68,7 +72,6 @@ with args.generate as rules_file:
             continue
 
         if len(tokens) > 0:
-
             try:
                 parser = get_parser(keyword)
 
@@ -76,20 +79,26 @@ with args.generate as rules_file:
 
                 generator = get_generator(keyword)
 
-                generated = generator(rule)
-    
-                # only add rule to output if the generator actually
-                # produced output
-                if generated != None:
-                    # include origin
-                    if args.include_origin:
-                        rules.append("# origin: line %d" % (i,))
-                    rules.append(generated)
+                generators_to_call.append((generator, rule))
 
             except ParserException as e:
                 error_line(e, i)
-            except GeneratorException as e:
-                error_line(e, i)
+
+    for (generator, rule) in generators_to_call:
+        try:
+            print (generator)
+            generated = generator(rule)
+
+            # only add rule to output if the generator actually
+            # produced output
+            if generated != None:
+                # include origin
+                if args.include_origin:
+                    rules.append("# origin: line %d" % (i,))
+                rules.append(generated)
+
+        except GeneratorException as e:
+            error_line(e, i)
 
         i += 1
 

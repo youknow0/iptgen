@@ -19,12 +19,13 @@ class AllowToGenerator(object):
 
         # generate one rule per addr of the host
         rule_out = ""
-        for addr in addr_generator.addrs[rule.host]:
-            myrule = rule_str + ("--dport %s -s %s -d %s" 
-                                    % (rule.port, addr, rule.dest))
-            myrule = call_hook("rule_allow_to", 
-                                 myrule, rule)
-            rule_out += myrule + linesep
+        for src_addr in addr_generator.addrs[rule.host]:
+            for dest_addr in addr_generator.addrs[rule.dest]:
+                myrule = rule_str + ("--dport %s -s %s -d %s" 
+                                        % (rule.port, src_addr, dest_addr))
+                myrule = call_hook("rule_allow_to", 
+                                     myrule, rule)
+                rule_out += myrule + linesep
 
 
         return rule_out
